@@ -2,7 +2,7 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="com.flutter_webview_plugin">
     <application>
-        <provider
+        <!-- <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
@@ -11,6 +11,6 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
-        </provider>
+        </provider> -->
     </application>
 </manifest>
