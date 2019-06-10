@@ -363,6 +363,8 @@ class WebviewManager {
 
         webView.getSettings().setUseWideViewPort(useWideViewPort);
 
+        webView.getSettings().setLoadWithOverviewMode(true);
+
         webViewClient.updateInvalidUrlRegex(invalidUrlRegex);
 
         if (geolocationEnabled) {
@@ -376,7 +378,7 @@ class WebviewManager {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
         if (clearCache) {
