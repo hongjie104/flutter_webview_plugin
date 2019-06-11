@@ -6,11 +6,14 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -244,6 +247,7 @@ class WebviewManager {
                 FlutterWebviewPlugin.channel.invokeMethod("onProgressChanged", args);
             }
         });
+        webView.addJavascriptInterface(new WebAppInterface(new Handler(context.getMainLooper())), "jsInterface");
     }
 
     private Uri getOutputFilename(String intentType) {
@@ -415,6 +419,7 @@ class WebviewManager {
     void close(MethodCall call, MethodChannel.Result result) {
         if (webView != null) {
             ViewGroup vg = (ViewGroup) (webView.getParent());
+            webView.removeJavascriptInterface("jsInterface");
             vg.removeView(webView);
         }
         webView = null;
@@ -495,6 +500,30 @@ class WebviewManager {
     void stopLoading(MethodCall call, MethodChannel.Result result){
         if (webView != null){
             webView.stopLoading();
+        }
+    }
+
+    public class WebAppInterface {
+        private final Handler platformThreadHandler;
+
+        WebAppInterface(Handler platformThreadHandler) {
+            this.platformThreadHandler = platformThreadHandler;
+        }
+
+        @JavascriptInterface
+        public void postMessage(final String message) {
+            Runnable postMessageRunnable =
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            FlutterWebviewPlugin.channel.invokeMethod("onPostMessage", message);
+                        }
+                    };
+            if (platformThreadHandler.getLooper() == Looper.myLooper()) {
+                postMessageRunnable.run();
+            } else {
+                platformThreadHandler.post(postMessageRunnable);
+            }
         }
     }
 }
