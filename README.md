@@ -207,3 +207,25 @@ Future<Null> goForward();
 Future<Null> stopLoading();
 ```
 
+### js通信示例
+
+```dart
+  @override
+  void initState() {
+    _flutterWebViewPlugin.onStateChanged.listen((state) async {
+      if (state.type == WebViewState.finishLoad) {
+        await _flutterWebViewPlugin.evalJavascript(
+            'window.addEventListener("message", receiveMessage, false);' +
+                'function receiveMessage(event) {jsInterface.postMessage(event.data);}');
+        // android的话，用下面的方法进行交互
+        // _flutterWebViewPlugin.evalJavascript('window.postMessage("TTTTsss");');
+        // iOS的话，用下面的方法进行交互
+        // _flutterWebViewPlugin.evalJavascript('window.webkit.messageHandlers.jsInterface.postMessage("abc");');
+      }
+    });
+    _onPostMessage =
+        _flutterWebViewPlugin.onPostMessage.listen((String message) {
+      print('post message = $message');
+    });
+  }
+```
