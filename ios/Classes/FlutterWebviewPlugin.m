@@ -311,7 +311,12 @@ static NSString *const CHANNEL_NAME = @"flutter_webview_plugin";
          if (isInvalid) {
             decisionHandler(WKNavigationActionPolicyCancel);
          } else {
-            decisionHandler(WKNavigationActionPolicyAllow);
+            // 如果是App Store的链接，就跳转到App Store
+            if([[navigationAction.request.URL host] isEqualToString:@"itunes.apple.com"] && [[UIApplication sharedApplication] openURL:navigationAction.request.URL]){
+                decisionHandler(WKNavigationActionPolicyCancel);
+            } else {
+                decisionHandler(WKNavigationActionPolicyAllow);
+            }
          }
     } else {
         decisionHandler(WKNavigationActionPolicyCancel);
