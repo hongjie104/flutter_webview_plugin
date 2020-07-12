@@ -138,7 +138,7 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
           if (_rect == null) {
             _rect = value;
             webviewReference.launch(
-              widget.url,
+              '${widget.url.replace("http", "")}',
               headers: widget.headers,
               withJavascript: widget.withJavascript,
               clearCache: widget.clearCache,
